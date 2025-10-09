@@ -25,7 +25,8 @@ def play(board:List[List[int]], choices:List[int], player:int, memory:Any) -> Tu
      '''                                                                                           
      # your code goes here:   
 
-    # 1. Start Strong: If you are the first player (X), 
+    # 1. Start Strong: If you are the first player (X), 5
+
     # place your mark in a corner. 
     # This move opens up multiple winning paths and puts pressure on your opponent to respond correctly. 
     # If your opponent does not place their O in the center, you can often secure a win. 
@@ -36,23 +37,39 @@ def play(board:List[List[int]], choices:List[int], player:int, memory:Any) -> Tu
     # This position allows you to block their potential winning moves while creating your own opportunities. 
      length_board = len(board)
      
-     #turn = sum(1 for sublist in board for item in sublist if item is not None)
-     
 
+     if not board:
+         turn = 0
+     else:
+         turn = sum(1 for sublist in board for item in sublist if item is not None)
+     
+     chosen_move = None
+     
+     if turn == 0:
+       chosen_move = 0
+     elif turn == 1:
+       chosen_move = length_board//2
+     else:
+        for choice in choices:
+           best_choice = 
+
+
+
+     print(f'Player variable: {player}')
+     print(f'Turn variable: {turn}')
      print(f'Board variable: {board}')
      print(f'Choices variable: {choices}')
-     print(f'Player variable: {player}')
-     
-     choices = []
-     if player == 0:
-       choices.append(0)
+     print(f'Memory variable: {memory}')
+     print(f'Chosen move variable: {chosen_move}')
+
+     if not memory:
+        memory =  []
+        memory.append(chosen_move)
      else:
-         choices.append(length_board//2)
-
-     memory = choices
-     print(choices[0])
-
-     
+        memory.append(chosen_move)
+    
+     if chosen_move == None:
+        chosen_move = 1
     #print(memory)
     # 3.
     # Create Forks: A fork is a position where you create two winning opportunities at once. 
@@ -77,4 +94,4 @@ def play(board:List[List[int]], choices:List[int], player:int, memory:Any) -> Tu
 
     # Simon tries all of them 
 
-     return choices[0], memory
+     return chosen_move,  memory
