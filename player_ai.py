@@ -35,7 +35,14 @@ def play(board:List[List[int]], choices:List[int], player:int, memory:Any) -> Tu
     # try to take the center square if your opponent starts in a corner. 
     # This position allows you to block their potential winning moves while creating your own opportunities. 
      length_board = len(board)
+     
+     #turn = sum(1 for sublist in board for item in sublist if item is not None)
+     
 
+     print(f'Board variable: {board}')
+     print(f'Choices variable: {choices}')
+     print(f'Player variable: {player}')
+     
      choices = []
      if player == 0:
        choices.append(0)
@@ -43,28 +50,31 @@ def play(board:List[List[int]], choices:List[int], player:int, memory:Any) -> Tu
          choices.append(length_board//2)
 
      memory = choices
+     print(choices[0])
 
      
-     print(memory)
+    #print(memory)
     # 3.
     # Create Forks: A fork is a position where you create two winning opportunities at once. 
     # For example, if you have two X's in a row and your opponent can only block one, 
     # you will win on your next turn. Always look for ways to set up a fork. 
 
-
+    # Lova
 
     # 4.
     # Block Your Opponent: If your opponent has two in a row, 
     # you must block their next move to prevent them from winning. 
     # Always be aware of their potential winning paths and respond accordingly. 
 
+    # Stella
+
     # 5.
     # Force a Draw: If both players play optimally, 
     # the game will end in a draw. If you find yourself in a position where you cannot win, 
     # focus on blocking your opponent's moves to ensure the game does not end in a loss. 
 
+    # Nuoting
 
+    # Simon tries all of them 
 
-
-
-     return choices[-1], memory
+     return choices[0], memory
