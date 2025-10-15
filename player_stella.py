@@ -66,34 +66,35 @@ def play(board:List[List[int]], choices:List[int], player:int, memory:Any) -> Tu
     # Block Your Opponent: If your opponent has two in a row, 
     # you must block their next move to prevent them from winning. 
     # Always be aware of their potential winning paths and respond accordingly. 
+
      board_size = len(board)
-     if player == 0:
+     if player == 0: # Step 1: Identify the opponent
          opponent = 1
      else:
-         opponent = 0
-     for col in choices:
-      test_board = []
+         opponent = 0 
+     for col in choices:  # Check each possible move to see if opponent would win by playing there
+      test_board = []    # Create a temporary board for testing
       for i in range(len(board)):
-        test_board.append(board[i][:])
-      test_board[col].append(opponent)
+        test_board.append(board[i][:])  # Copy each column
+      test_board[col].append(opponent)  # Simulate opponent making a move in this column
       if check_if_player_wins(test_board, opponent, len(board)):
-         return col, memory
+         return col, memory  # If opponent would win, we must block! Choose this position
      for col in choices:
         test_board = []
         for i in range(len(board)):
             test_board.append(board[i][:])
         test_board[col].append(player)
-        if check_if_player_wins(test_board, player, board_size):
-          return col, memory
-     if choices:
-        return random.choice(choices), memory
-     return 0, memory
+        if check_if_player_wins(test_board, player, board_size):  
+          return col, memory # Check if we have an immediate winning opportunity
+     if choices: 
+        return random.choice(choices), memory # If no opportunities, choose randomly
+     return 0, memory # safe return if no choices available
     
 def check_if_player_wins(board: List[List[int]], check_player: int, board_size: int) -> bool:
-      for row in range(board_size):
-        for col in range(board_size - 2):
+      for row in range(board_size):  # Check horizontal direction (rows)
+        for col in range(board_size - 2): # first column to start checking
             all_same = True
-            for i in range(3):
+            for i in range(3): # check next 3 in the row
                 current_col = col + i
                 if (row >= len(board[current_col]) or 
                     board[current_col][row] != check_player):
@@ -101,7 +102,7 @@ def check_if_player_wins(board: List[List[int]], check_player: int, board_size: 
                     break
             if all_same:
                 return True
-      for col in range(board_size):
+      for col in range(board_size):  # Check vertical direction (columns)
         if len(board[col]) >= 3:
             for start_row in range(len(board[col]) - 2):
                 all_same = True
@@ -112,7 +113,7 @@ def check_if_player_wins(board: List[List[int]], check_player: int, board_size: 
                         break
                 if all_same:
                     return True
-      for start_col in range(board_size - 2):
+      for start_col in range(board_size - 2):  # Check diagonal (top-left to bottom-right)
         for start_row in range(board_size - 2):
             all_same = True
             for i in range(3):
@@ -124,7 +125,7 @@ def check_if_player_wins(board: List[List[int]], check_player: int, board_size: 
                     break
             if all_same:
                 return True
-      for start_col in range(2, board_size):
+      for start_col in range(2, board_size): # Check diagonal (top-right to bottom-left)
         for start_row in range(board_size - 2):
             all_same = True
             for i in range(3):
