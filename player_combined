@@ -1,0 +1,185 @@
+#====================================================================================================#
+# Imports:                                                                                           #
+#====================================================================================================#
+import random
+from typing import Any, List, Tuple
+
+#====================================================================================================#
+# Play Function:                                                                                     #
+#====================================================================================================#
+
+
+def play(board:List[List[int]], choices:List[int], player:int, memory:Any) -> Tuple[int, Any]:    
+     '''Your team's player.                                                                        
+                                                                                                   
+         Arguments:                                                                                
+             board (List[List[int]]): The game plan as a list of columns. Each column is a list of 
+                                      integer ids signifying the player who placed the piece.      
+             choices     (List[int]): The possible moves allowed by the game rules.                
+             player            (int): Integer id of the current player in the game plan.           
+             memory            (any): Persistent information passed as the second output in the    
+                                      previous round. Initialized with None.                       
+                                                                                                   
+         Returns   (Tuple[int, Any]): A tuple of the selected column (int) and the memory object   
+                                      for the next iteration (can be anything).                    
+     '''                                                                                           
+    
+     # your code goes here:   
+
+    # 1. Start Strong: If you are the first player (X), 
+    # place your mark in a corner. 
+    # This move opens up multiple winning paths and puts pressure on your opponent to respond correctly. 
+    # If your opponent does not place their O in the center, you can often secure a win. 
+
+    # 2.
+    # Control the Center: If you are the second player (O), 
+    # try to take the center square if your opponent starts in a corner. 
+    # This position allows you to block their potential winning moves while creating your own opportunities. 
+    #length_board = len(board)
+
+     turn = sum(1 for sublist in board for item in sublist if item is not None)
+     
+    
+
+    #  print(f'Board variable: {board}')
+    #  print(f'Choices variable: {choices}')
+     print(f'Turn variable: {turn}')
+     
+     board_size = len(board)
+     if turn == 0:
+       return 0, memory
+     if turn == 1:
+         return board_size//2, memory
+     
+     if player == 0: # Step 1: Identify the opponent
+         opponent = 1
+     else:
+         opponent = 0 
+     
+     for col in choices:
+        test_board = []
+        for i in range(len(board)):
+            test_board.append(board[i][:])
+        test_board[col].append(player)
+        if check_if_player_wins(test_board, player, board_size):  
+          print(f'Attack!')
+          return col, memory # Check if we have an immediate winning opportunity
+        
+     for col in choices:  # Check each possible move to see if opponent would win by playing there
+      test_board = []    # Create a temporary board for testing
+      for i in range(len(board)):
+        test_board.append(board[i][:])  # Copy each column
+      test_board[col].append(opponent)  # Simulate opponent making a move in this column
+      if check_if_player_wins(test_board, opponent, len(board)):
+         print(f'Block!')
+         return col, memory  # If opponent would win, we must block! Choose this position
+     
+     if choices: 
+        print(f'Random!')
+        return random.choice(choices), memory # If no opportunities, choose randomly
+     return 0, memory # safe return if no choices available
+    
+def check_if_player_wins(board: List[List[int]], check_player: int, board_size: int) -> bool:
+      m_start = 3
+
+      for row in range(board_size):  # Check horizontal direction (rows)
+        for col in range(board_size - 2): # first column to start checking
+            all_same = True
+            count_hor = 0
+            for i in range(m_start): # check next 3 in the row
+                current_col = col + i
+                count_hor += i
+                if (row >= len(board[current_col]) or 
+                    board[current_col][row] != check_player):
+                    all_same = False
+                    break
+            if all_same:
+                return True, count_hor
+      for col in range(board_size):  # Check vertical direction (columns)
+        if len(board[col]) >= 3:
+            for start_row in range(len(board[col]) - 2):
+                all_same = True
+                count_ver = 0
+                for i in range(m_start):
+                    current_row = start_row + i
+                    count_ver += i
+                    if board[col][current_row] != check_player:
+                        all_same = False
+                        break
+                if all_same:
+                    return True, count_ver
+      for start_col in range(board_size - 2):  # Check diagonal (top-left to bottom-right)
+        for start_row in range(board_size - 2):
+            all_same = True
+            count_diag_l = 0
+            for i in range(m_start):
+                col_idx = start_col + i
+                row_idx = start_row + i
+                count_diag_l += 1
+                if (row_idx >= len(board[col_idx]) or 
+                    board[col_idx][row_idx] != check_player):
+                    all_same = False
+                    break
+            if all_same:
+                return True, count_diag_l
+      for start_col in range(2, board_size): # Check diagonal (top-right to bottom-left)
+        for start_row in range(board_size - 2):
+            all_same = True
+            count_diag_r = 0
+            for i in range(m_start):
+                col_idx = start_col - i
+                row_idx = start_row + i
+                count_diag_r += 1
+                if (row_idx >= len(board[col_idx]) or 
+                    board[col_idx][row_idx] != check_player):
+                    all_same = False
+                    break
+            if all_same:
+                return True, count_diag_r
+      
+      m_start = max(count_hor, count_ver, count_diag_l, count_diag_r)
+      print(m_start)
+      return False
+
+
+# Check if opponent can win in the next move and block
+
+
+  # opponent = 3 - player_ai
+  # for choices in self.get_available_moves():
+  #           temp_board = self.board.copy()
+  #           row = self.get_next_available_row(col)
+  #           if row is not None:
+  #               temp_board[row][col] = opponent
+  #               if self.check_winner_on_board(temp_board, opponent):
+  #                   return col
+
+  # for row in range(rows-1, -1, -1):
+  #       if new_board[row][col] == 0:
+  #           new_board[row][col] = player
+  #           return new_board
+
+  # Best_move = None
+  # max = len(board) 
+  # for choice in choices:
+  #   temp_board = board.copy()
+  #   #temp_board = play_move(temp_board, choice)
+  #   new_max = len(temp_board)
+  #   if new_max > max:
+  #     max = new_max
+  #     Best_move = choice
+  # if Best_move is None:
+  #   Best_move = random.choice(choices)
+  # else:
+  #    choice = Best_move
+
+    # Stella
+
+    # 5.
+    # Force a Draw: If both players play optimally, 
+    # the game will end in a draw. If you find yourself in a position where you cannot win, 
+    # focus on blocking your opponent's moves to ensure the game does not end in a loss. 
+
+    # Nuoting
+
+    # Simon tries all of them 
