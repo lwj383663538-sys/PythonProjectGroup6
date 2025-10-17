@@ -1,0 +1,148 @@
+#====================================================================================================#
+# Imports:                                                                                           #
+#====================================================================================================#
+import random
+from typing import Any, List, Tuple
+
+#====================================================================================================#
+# Play Function:                                                                                     #
+#====================================================================================================#
+
+
+def play(board:List[List[int]], choices:List[int], player:int, memory:Any) -> Tuple[int, Any]:    
+     '''Your team's player.                                                                        
+                                                                                                   
+         Arguments:                                                                                
+             board (List[List[int]]): The game plan as a list of columns. Each column is a list of 
+                                      integer ids signifying the player who placed the piece.      
+             choices     (List[int]): The possible moves allowed by the game rules.                
+             player            (int): Integer id of the current player in the game plan.           
+             memory            (any): Persistent information passed as the second output in the    
+                                      previous round. Initialized with None.                       
+                                                                                                   
+         Returns   (Tuple[int, Any]): A tuple of the selected column (int) and the memory object   
+                                      for the next iteration (can be anything).                    
+     '''                                                                                           
+    
+     # your code goes here:  
+
+     turn = sum(1 for sublist in board for item in sublist if item is not None)
+     
+    #  print(f'Board variable: {board}')
+    #  print(f'Choices variable: {choices}')
+     print(f'Turn variable: {turn}')
+     
+     board_size = len(board)
+     if turn == 0:
+       return 0, memory
+     if turn == 1:
+         return board_size//2, memory
+     
+     if player == 0: # Step 1: Identify the opponent
+         opponent = 1
+     else:
+         opponent = 0 
+     
+     streak_threshold = 3
+     if memory == None:
+        memory = 0
+
+     if memory >= 1:
+            streak_threshold += 1
+     n_attacks = 0
+     n_blocks = 0
+    # Attack: see if we can win
+     for col in choices:
+        test_board = []
+        test_board = [c[:] for c in board]
+        test_board[col].append(player)
+        if longest_streak(test_board, player) >= streak_threshold:  
+          print(f'Attack!')
+          print(longest_streak(test_board, player))
+          memory += 1
+          return col, memory
+      
+
+    # Block: prevent opponent from winning
+     for col in choices:
+        test_board = []
+        test_board = [c[:] for c in board]
+        test_board[col].append(opponent)
+        if longest_streak(test_board, opponent) >= streak_threshold:  
+          print(f'Block!')
+          print(f'MT: {longest_streak(test_board, opponent)}')
+          print(f'ST: {streak_threshold}')
+          memory += 1
+          return col, memory
+     
+     best_col = choices[0] # just start with first column
+     max_streak = -1 # just a random number
+     for col in choices:
+        test_board = []
+        test_board = [c[:] for c in board]
+        test_board[col].append(player)
+        streak = longest_streak(test_board, player)
+        if streak > max_streak:
+            max_streak = streak
+            best_col = col
+     
+     print(f'Extend longest str!')
+     print(max_streak)
+     return best_col, memory   
+  
+# Streak Calculation:
+
+def longest_streak(board: List[List[int]], check_player: int) -> int:
+    """
+    Returns the longest streak of `check_player` on the board.
+    Works for vertical, horizontal, and both diagonals.
+    """
+    board_size = len(board)
+    max_streak = 0
+
+  
+    for row in range(board_size):
+        count = 0
+        for col in range(board_size):
+            if  row < len(board[col]) and board[col][row] == check_player:
+                count += 1
+                max_streak = max(max_streak, count)
+            else:
+                count = 0  # reset when no longer match
+
+  # Vertical
+    for col in range(board_size):
+          count = 0
+          for row in range(len(board[col])):
+              if board[col][row] == check_player:
+                  count += 1
+                  max_streak = max(max_streak, count)
+              else: 
+                  count = 0
+          #if longest_streak >= 
+
+    for start_row in range(board_size):
+        for start_col in range(board_size):
+            count = 0
+            for i in range(min(board_size - start_row, board_size - start_col)):
+                row_idx = start_row + i
+                col_idx = start_col + i
+                if row_idx < len(board[col_idx]) and board[col_idx][row_idx] == check_player:
+                    count += 1
+                    max_streak = max(max_streak, count)
+                else:
+                    count = 0
+
+    for start_row in range(board_size):
+        for start_col in range(board_size):
+            count = 0
+            for i in range(min(board_size - start_row, start_col + 1)):
+                row_idx = start_row + i
+                col_idx = start_col - i
+                if row_idx < len(board[col_idx]) and board[col_idx][row_idx] == check_player:
+                    count += 1
+                    max_streak = max(max_streak, count)
+                else:
+                    count = 0
+
+    return max_streak
