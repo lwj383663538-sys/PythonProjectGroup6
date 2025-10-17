@@ -132,19 +132,6 @@ def play(board:List[List[int]], choices:List[int], player:int, memory:Any) -> Tu
         return random.choice(choices), memory # If no opportunities, choose randomly
      return 0, memory # safe return if no choices available
 
- # choose the longest streak if we can't block or win
-     best_col = choices[0] # just start with first column
-     max_streak = -1 # just a random number
-     for col in choices:
-        test_board = [c[:] for c in board]
-        test_board[col].append(player)
-        streak = check_if_player_wins(test_board, player, board_size)[1]
-        if streak > max_streak:
-            max_streak = streak
-            best_col = col
-     print(f'Extend longest str!')
-     return best_col, memory
-
 def check_if_player_wins(board: List[List[int]], check_player: int, board_size: int, win_length: int) -> bool:
       for row in range(board_size):  # Check horizontal direction (rows)
         for col in range(board_size - win_length + 1): # first column to start checking
