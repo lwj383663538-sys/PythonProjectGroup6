@@ -88,6 +88,7 @@ def play(board:List[List[int]], choices:List[int], player:int, memory:Any) -> Tu
                 test_board[col] = test_board[col][:]
                 test_board[col].append(player)
                 if check_if_player_wins(test_board, player, board_size, win_length):
+                    print(f'Attack!')
                     return col, memory  # Check if we have an immediate winning opportunity
      for win_length in win_lengths:
         for col in choices:  # Check each possible move to see if opponent would win by playing there
@@ -98,6 +99,7 @@ def play(board:List[List[int]], choices:List[int], player:int, memory:Any) -> Tu
                 test_board[col] = test_board[col][:]
                 test_board[col].append(opponent)  # Simulate opponent making a move in this column
                 if check_if_player_wins(test_board, opponent, len(board), win_length):
+                    print(f'Block!')    
                     return col, memory  # If opponent would win, we must block! Choose this position
      if choices:  # Check for positions that can form the longest consecutive pieces
         best_col = None
@@ -127,6 +129,7 @@ def play(board:List[List[int]], choices:List[int], player:int, memory:Any) -> Tu
                 max_streak = current_streak
                 best_col = col
         if best_col is not None and max_streak >= 2:  # If found a position that can form longer consecutive pieces
+            print(f'Best Move!')
             return best_col, memory
         
         return random.choice(choices), memory # If no opportunities, choose randomly
